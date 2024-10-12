@@ -1,0 +1,23 @@
+#spring.application.name=piche-banking
+
+DATASOURCE_USER: test_user
+DATASOURCE_PASSWORD: testpassword
+
+spring:
+  application:
+    name: piche-banking
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/piche_bank
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+  flyway:
+    url: jdbc:postgresql://localhost:5432/piche_bank
+    user: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    locations: classpath:/db/migration
