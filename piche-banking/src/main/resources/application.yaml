@@ -1,7 +1,7 @@
 #spring.application.name=piche-banking
 
-DATASOURCE_USER: test_user
-DATASOURCE_PASSWORD: testpassword
+DATASOURCE_USER: postgres
+DATASOURCE_PASSWORD: postgres
 
 spring:
   application:

@@ -25,9 +25,6 @@ public class Account {
     @Column
     private Long id;
 
-    @Column(unique = true)
-    private UUID accountNumber;
-
     @Column
     private String fullName;
 
