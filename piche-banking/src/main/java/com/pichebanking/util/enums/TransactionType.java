@@ -1,4 +1,4 @@
-package com.pichebanking.util.constant.enums;
+package com.pichebanking.util.enums;
 
 public enum TransactionType {
     DEPOSIT, WITHDRAW, TRANSFER

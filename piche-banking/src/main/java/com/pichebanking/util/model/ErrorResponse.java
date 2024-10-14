@@ -1,4 +1,4 @@
-package com.pichebanking.model;
+package com.pichebanking.util.model;
 
 import java.time.LocalDateTime;
 

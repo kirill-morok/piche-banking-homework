@@ -1,6 +1,6 @@
 package com.pichebanking.dao.entity;
 
-import com.pichebanking.util.constant.enums.TransactionType;
+import com.pichebanking.util.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;

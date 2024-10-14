@@ -6,7 +6,7 @@ import com.pichebanking.dao.entity.PicheTransaction;
 import com.pichebanking.dao.repository.PicheTransactionRepository;
 import com.pichebanking.exception.AccountNotFoundException;
 import com.pichebanking.exception.InsufficientFundsException;
-import com.pichebanking.util.constant.enums.TransactionType;
+import com.pichebanking.util.enums.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

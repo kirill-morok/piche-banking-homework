@@ -5,7 +5,7 @@ import com.pichebanking.dao.entity.Account;
 import com.pichebanking.dao.entity.PicheTransaction;
 import com.pichebanking.dao.repository.PicheTransactionRepository;
 import com.pichebanking.exception.AccountNotFoundException;
-import com.pichebanking.util.constant.enums.TransactionType;
+import com.pichebanking.util.enums.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.pichebanking.util.constant.ExceptionMessage.ACCOUNT_NOT_FOUND_MSG;
-import static com.pichebanking.util.constant.enums.TransactionType.*;
+import static com.pichebanking.util.enums.TransactionType.*;
 
 @Service
 @RequiredArgsConstructor
