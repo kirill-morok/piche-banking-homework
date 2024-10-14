@@ -1,8 +1,6 @@
 package com.pichebanking.api.controller;
 
 import com.pichebanking.api.dto.request.CreateAccountRequest;
-import com.pichebanking.api.dto.request.FundsRequest;
-import com.pichebanking.api.dto.request.TransferFundsRequest;
 import com.pichebanking.api.dto.response.AccountResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,17 +21,4 @@ public interface AccountControllerApi {
 
     @GetMapping
     List<AccountResponse> getAccounts();
-
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @PatchMapping("/{id}/deposit")
-    void depositFunds(@PathVariable Long id, @RequestBody @Valid FundsRequest request);
-
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @PatchMapping("/{id}/withdraw")
-    void withdrawFunds(@PathVariable Long id, @RequestBody @Valid FundsRequest request);
-
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @PostMapping("/transfer")
-    void transferFunds(@RequestBody @Valid TransferFundsRequest request);
-
 }

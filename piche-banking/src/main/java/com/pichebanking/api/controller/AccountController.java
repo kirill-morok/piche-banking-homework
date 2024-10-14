@@ -36,19 +36,4 @@ public class AccountController implements AccountControllerApi {
                 .map(account -> conversionService.convert(account, AccountResponse.class))
                 .toList();
     }
-
-    @Override
-    public void depositFunds(Long id, FundsRequest request) {
-        accountService.depositFunds(id, request.funds());
-    }
-
-    @Override
-    public void withdrawFunds(Long id, FundsRequest request) {
-        accountService.withdrawFunds(id, request.funds());
-    }
-
-    @Override
-    public void transferFunds(TransferFundsRequest request) {
-        accountService.transferFunds(request);
-    }
 }

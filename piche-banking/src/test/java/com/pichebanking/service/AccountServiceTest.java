@@ -1,7 +1,6 @@
 package com.pichebanking.service;
 
 import com.pichebanking.api.dto.request.CreateAccountRequest;
-import com.pichebanking.api.dto.request.TransferFundsRequest;
 import com.pichebanking.dao.entity.Account;
 import com.pichebanking.dao.repository.AccountRepository;
 import com.pichebanking.exception.AccountNotFoundException;
@@ -15,7 +14,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,15 +83,17 @@ class AccountServiceTest {
     void depositFundsTest() {
         var id = 1L;
         var funds = BigDecimal.valueOf(20);
-        var account = new Account().setBalance(BigDecimal.TEN).setId(1L).setFullName(USER_FULL_NAME);
+        var expected = new Account().setBalance(BigDecimal.TEN).setId(1L).setFullName(USER_FULL_NAME);
 
-        Mockito.when(accountRepository.findByIdWithLock(id)).thenReturn(Optional.ofNullable(account));
-        Mockito.when(accountRepository.save(account.setBalance(funds))).thenReturn(account);
+        Mockito.when(accountRepository.findByIdWithLock(id)).thenReturn(Optional.ofNullable(expected));
+        Mockito.when(accountRepository.save(expected.setBalance(funds))).thenReturn(expected);
 
-        accountService.depositFunds(id, BigDecimal.TEN);
+        var actual = accountService.depositFunds(id, BigDecimal.TEN);
 
         Mockito.verify(accountRepository, Mockito.times(1)).findByIdWithLock(id);
-        Mockito.verify(accountRepository, Mockito.times(1)).save(account);
+        Mockito.verify(accountRepository, Mockito.times(1)).save(expected);
+
+        assertEquals(actual, expected);
     }
 
     @Test
@@ -109,15 +109,17 @@ class AccountServiceTest {
     void withdrawFundsTest() {
         var id = 1L;
         var accountOne = new Account().setBalance(BigDecimal.TEN).setId(1L).setFullName(USER_FULL_NAME);
-        var account = new Account().setBalance(BigDecimal.ZERO).setId(1L).setFullName(USER_FULL_NAME);
+        var expected = new Account().setBalance(BigDecimal.ZERO).setId(1L).setFullName(USER_FULL_NAME);
 
         Mockito.when(accountRepository.findByIdWithLock(id)).thenReturn(Optional.ofNullable(accountOne));
-        Mockito.when(accountRepository.save(account)).thenReturn(account);
+        Mockito.when(accountRepository.save(expected)).thenReturn(expected);
 
-        accountService.withdrawFunds(id, BigDecimal.TEN);
+        var actual = accountService.withdrawFunds(id, BigDecimal.TEN);
 
         Mockito.verify(accountRepository, Mockito.times(1)).findByIdWithLock(id);
-        Mockito.verify(accountRepository, Mockito.times(1)).save(account);
+        Mockito.verify(accountRepository, Mockito.times(1)).save(expected);
+
+        assertEquals(actual, expected);
     }
 
     @Test
@@ -141,58 +143,41 @@ class AccountServiceTest {
 
     @Test
     void transferFundsTest() {
-        var request = new TransferFundsRequest(1L, 2L, BigDecimal.TEN);
-        var ids = List.of(1L, 2L);
         var accountSource = new Account().setBalance(BigDecimal.TEN).setId(1L).setFullName(USER_FULL_NAME);
         var accountTarget = new Account().setBalance(BigDecimal.ZERO).setId(2L).setFullName(USER_FULL_NAME);
+
         var accountSourceChanged = new Account().setBalance(BigDecimal.ZERO).setId(1L).setFullName(USER_FULL_NAME);
         var accountTargetChanged = new Account().setBalance(BigDecimal.TEN).setId(2L).setFullName(USER_FULL_NAME);
-        var listAccounts = List.of(accountSource, accountTarget);
+
         var listAccountsChanged = List.of(accountSourceChanged, accountTargetChanged);
 
-        Mockito.when(accountRepository.findByIdInWithLock(ids)).thenReturn(listAccounts);
         Mockito.when(accountRepository.saveAll(listAccountsChanged)).thenReturn(listAccountsChanged);
 
-        accountService.transferFunds(request);
+        accountService.transferFundsBetweenTwoAccounts(accountSource, accountTarget, BigDecimal.TEN);
 
-        Mockito.verify(accountRepository, Mockito.times(1)).findByIdInWithLock(ids);
         Mockito.verify(accountRepository, Mockito.times(1)).saveAll(listAccountsChanged);
     }
 
     @Test
     void transferFundsInsufficientExceptionTest() {
-        var request = new TransferFundsRequest(1L, 2L, BigDecimal.TEN);
-        var ids = List.of(1L, 2L);
         var accountSource = new Account().setBalance(BigDecimal.ONE).setId(1L).setFullName(USER_FULL_NAME);
         var accountTarget = new Account().setBalance(BigDecimal.ZERO).setId(2L).setFullName(USER_FULL_NAME);
-        var listAccounts = List.of(accountSource, accountTarget);
 
-        Mockito.when(accountRepository.findByIdInWithLock(ids)).thenReturn(listAccounts);
-
-        assertThrows(InsufficientFundsException.class, () -> accountService.transferFunds(request));
+        assertThrows(InsufficientFundsException.class,
+                () -> accountService.transferFundsBetweenTwoAccounts(accountSource, accountTarget, BigDecimal.TEN));
     }
 
     @Test
-    void transferFundsAccountNotFoundExceptionTest() {
-        var request = new TransferFundsRequest(1L, 2L, BigDecimal.TEN);
+    void findAccountsWithLockTest() {
+        var accountOne = new Account().setBalance(BigDecimal.TEN).setId(1L).setFullName(USER_FULL_NAME);
+        var accountTwo = new Account().setBalance(BigDecimal.ZERO).setId(2L).setFullName(USER_FULL_NAME);
+        var expected = List.of(accountOne, accountTwo);
         var ids = List.of(1L, 2L);
-        var accountSource = new Account().setBalance(BigDecimal.ONE).setId(1L).setFullName(USER_FULL_NAME);
-        var listAccounts = Collections.singletonList(accountSource);
 
-        Mockito.when(accountRepository.findByIdInWithLock(ids)).thenReturn(listAccounts);
+        Mockito.when(accountRepository.findByIdInWithLock(ids)).thenReturn(expected);
 
-        assertThrows(AccountNotFoundException.class, () -> accountService.transferFunds(request));
-    }
+        var actual = accountService.findAccountsWithLock(ids);
 
-    @Test
-    void transferFundsSecondAccountNotFoundExceptionTest() {
-        var request = new TransferFundsRequest(1L, 2L, BigDecimal.TEN);
-        var ids = List.of(1L, 2L);
-        var accountTarget = new Account().setBalance(BigDecimal.ZERO).setId(2L).setFullName(USER_FULL_NAME);
-        var listAccounts = Collections.singletonList(accountTarget);
-
-        Mockito.when(accountRepository.findByIdInWithLock(ids)).thenReturn(listAccounts);
-
-        assertThrows(AccountNotFoundException.class, () -> accountService.transferFunds(request));
+        assertEquals(actual, expected);
     }
 }

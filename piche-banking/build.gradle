@@ -31,11 +31,10 @@ dependencies {
     // database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.postgresql:postgresql'
+    runtimeOnly 'com.h2database:h2'
 
     // Flyway for database migrations
     implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-database-postgresql:10.4.1'
 
     // Lombok for code generation
     compileOnly 'org.projectlombok:lombok'
